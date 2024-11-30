@@ -34,9 +34,29 @@
       align-self: flex-start; /* Overrides the center alignment from the body */
       padding-left: 20px;
       font-size: 24px;
-      margin-top: 5px; /* Remove top margin */
+      margin-top: 0px; /* Remove top margin */
       text-align: left;
       font-weight: 800;
+    }
+
+    h3 {
+      align-self: flex-start; /* Overrides the center alignment from the body */
+      padding-left: 20px;
+      font-size: 30px;
+      word-spacing: -5%;
+      margin: 3px 0 2px 0; /* Remove top margin */
+      padding: 0px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .caption {
+      padding-left: 20px;
+      font-size: 12px;
+      color: #8e8e8e;
+      font-weight: 500;
+      padding: 0px;
+      margin: 0px;
     }
 
     .container {
@@ -105,24 +125,88 @@
       color: #fff;
       padding: 15px;
       border: none;
-      border-radius: 5px;
+      border-radius: 30px;
       font-size: 16px;
       cursor: pointer;
       width: 100%;
       margin: 20px 0;
-      border-radius: 30px;
     }
 
     .back-icon {
-    width: 40px; /* Adjust the size of the icon */
-    height: auto;
-    cursor: pointer;
-    margin: 20px;
-    transition: transform 0.2s ease; /* Add a hover effect */
+      width: 30px; /* Adjust the size of the icon */
+      height: auto;
+      cursor: pointer;
+      transition: transform 0.2s ease; /* Add a hover effect */
+      align-self: flex-start; /* Align the icon to the left */
     }
 
     .back-icon:hover {
       transform: scale(1.1); /* Slightly enlarge the icon on hover */
+    }
+
+    .profile-icon {
+      width: 30px; /* Adjust the size of the icon */
+      height: auto;
+      margin-top: 10px;
+      margin-right: 15px;
+      align-self: flex-end; /* Align the icon to the right */
+    }
+
+    .emotion-container {
+      background-color: #eeeeee; /* Light grey background for the container */
+      margin: 15px 0;
+      padding: 25px;
+      width: 300px;
+    }
+
+    .emotion-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .emotion-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .emotion-label {
+      flex: 1;
+      font-weight: bold;
+      color: #000000;
+      margin-right: 10px;
+    }
+
+    .emotion-bar {
+      flex: 2;
+      height: 20px;
+      border-radius: 5px;
+    }
+
+    /* Custom colors for each bar */
+    .curiosity {
+      background-color: #000000; /* Black */
+      width: 100%;
+    }
+
+    .admiration {
+      background-color: #888888; /* Dark grey */
+      width: 80%;
+    }
+
+    .delight {
+      background-color: #cccccc; /* Light grey */
+      width: 60%;
+    }
+
+    .confused {
+      background-color: #ffffff; /* White */
+      width: 40%;
+      border: 1px solid #dddddd; /* Add border for visibility */
+    }
+
+    .content-container {
+      text-align: left; /* Ensure text inside is left-aligned */
+      width: 100%; /* Make sure the container spans the full width */
     }
 
     .page {
@@ -142,10 +226,21 @@
       background-color: #ffffff;
       color: #000000;
     }
+
+    #new-recording-page {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start; /* Align items to the left */
+      justify-content: flex-start; /* Align items to the top */
+      width: 100%; /* Ensure it spans the full width */
+      height: 100%; /* Ensure it spans the full height */
+      box-sizing: border-box; /* Include padding in the element's dimensions */
+    }
   </style>
 </head>
 <body>
   <div id="home-page" class="page active">
+    <img id="profile" src="icon/profile.png" alt="profile" class="profile-icon">
     <h1>Welcome to</h1>
     <h2>Sentiment.Figma</h2>
     <div class="container">
@@ -173,30 +268,64 @@
   <!-- New Recording Page -->
   <div id="new-recording-page" class="page">
     <img id="back-to-home" src="icon/back.png" alt="Back" class="back-icon">
-    <h1>New Recording</h1>
-    <p>Your recording details will be displayed here.</p>
+    <h3>New Recording</h3>
+    <p class="caption">Recorded on</p>
+    <div class="emotion-container">
+      <div class="emotion-row">
+        <div class="emotion-label">Curiosity</div>
+        <div class="emotion-bar curiosity"></div>
+      </div>
+      <div class="emotion-row">
+        <div class="emotion-label">Admiration</div>
+        <div class="emotion-bar admiration"></div>
+      </div>
+      <div class="emotion-row">
+        <div class="emotion-label">Delight</div>
+        <div class="emotion-bar delight"></div>
+      </div>
+      <div class="emotion-row">
+        <div class="emotion-label">Confused</div>
+        <div class="emotion-bar confused"></div>
+      </div>
+    </div>
   </div>
 
   <script>
+  // Array to store feedback and timestamp data
+    const recordings = [];
     document.getElementById('generate').onclick = () => {
-      const feedback = document.getElementById('feedback').value;
-      const entropy = document.getElementById('entropy').value;
-      const temperature = document.getElementById('temperature').value;
+    const feedback = document.getElementById('feedback').value;
+    const entropy = document.getElementById('entropy').value;
+    const temperature = document.getElementById('temperature').value;
 
-      parent.postMessage(
-        { pluginMessage: { type: 'generate', feedback, entropy, temperature } },
-        '*'
-      );
+    // Capture the current date and time
+    const timestamp = new Date().toLocaleString();
 
-      // Switch to the new recording page
-      document.getElementById('home-page').classList.remove('active');
-      document.getElementById('new-recording-page').classList.add('active');
-    };
+    // Save the feedback and timestamp
+    recordings.push({ feedback, entropy, temperature, timestamp });
 
-      // Go back to the home page
-    document.getElementById('back-to-home').onclick = () => {
-      document.getElementById('new-recording-page').classList.remove('active');
-      document.getElementById('home-page').classList.add('active');
+    // Optional: Log the data for debugging
+    console.log(recordings);
+
+    // Send data to the plugin backend (if needed)
+    parent.postMessage(
+      { pluginMessage: { type: 'generate', feedback, entropy, temperature, timestamp } },
+      '*'
+    );
+
+    // Switch to the new recording page
+    document.getElementById('home-page').classList.remove('active');
+    document.getElementById('new-recording-page').classList.add('active');
+
+    // Update the caption with the timestamp
+    const captionElement = document.querySelector('.caption');
+    captionElement.textContent = `Recorded on ${timestamp}`;
+  };
+
+  // Go back to the home page
+  document.getElementById('back-to-home').onclick = () => {
+    document.getElementById('new-recording-page').classList.remove('active');
+    document.getElementById('home-page').classList.add('active');
   };
   </script>
 </body>
